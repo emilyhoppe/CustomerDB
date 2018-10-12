@@ -1,7 +1,7 @@
 /** ***********
  *
  *      Class:         AddedServlet.java
- *      Package:       javaeetutorial.hello2
+ *      Package:       javaeetutorial.CustomerDBServlets
  *      Date:          July 2018
  *
  *      Course: UMUC CMIS 440 Advanced Programming in Java
