@@ -28,7 +28,8 @@ import javax.swing.JOptionPane;
 
 @WebServlet("/added")
 public class AddedServlet extends HttpServlet {
-
+    
+    //Fields
     private static String dbURL = "jdbc:derby://localhost:1527/contact;create=true;user=nbuser;password=nbuser";
     private static String tableName = "Customers";
     private static Connection conn = null;
@@ -36,16 +37,23 @@ public class AddedServlet extends HttpServlet {
     private PrintWriter out;
     private int id = 0;
     ResultSet rset = null;
-
+    
+    //Methods  
+    
+    //Retrieves the verified information provided from the user from InsertServlet.java 
+    //Inserts the new Customer into the database.
+    //Then displays new Customer in a table under the form if insert was successful.
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            //Initialize writer and make database connection
             out = response.getWriter();
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             conn = DriverManager.getConnection(dbURL);
-
+            
+            //Retrieve parameters for new Customer
             id = Integer.parseInt(request.getParameter("id"));
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
@@ -53,16 +61,14 @@ public class AddedServlet extends HttpServlet {
             String city = request.getParameter("city");
             String state = request.getParameter("state");
             String zip = request.getParameter("zip");
-
+            
+            //Insert new Customer
             stmt = conn.createStatement();
             stmt.execute("insert into " + tableName + " values ("
                     + id + ",'" + lastName + "','" + firstName + "','" + street + "','" + city + "','" + state + "','" + zip + "')");
             stmt.close();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Cannot Connect to Database", "Error Message", JOptionPane.OK_OPTION);
-            ex.printStackTrace();
-        }
-        try {
+            
+            //Retrieve new Customer from table to verify insert. Then display in a table.
             stmt = conn.createStatement();
             rset = stmt.executeQuery("SELECT * FROM " + tableName + " where (id = " + id + ")");
             out.println("<h2>Customer Added:</h2>");

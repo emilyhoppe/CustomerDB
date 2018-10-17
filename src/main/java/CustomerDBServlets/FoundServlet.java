@@ -29,6 +29,7 @@ import java.sql.Statement;
 @WebServlet("/found")
 public class FoundServlet extends HttpServlet {
 
+    //Fields
     private static String dbURL = "jdbc:derby://localhost:1527/contact;create=true;user=nbuser;password=nbuser";
     private static String tableName = "Customers";
     private static Connection conn = null;
@@ -36,19 +37,29 @@ public class FoundServlet extends HttpServlet {
     private PrintWriter out;
     ResultSet rset = null;
 
+    //Methods
+    
+    //Retrieves the verified information provided from the user from SearchServlet.java 
+    //Queries for the Customer in the database.
+    //Then displays Customer in a table under the form if the query was successful.
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            //Initialize writer and make database connection
             out = response.getWriter();
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             conn = DriverManager.getConnection(dbURL);
+            
+            //Verifies that id is an integer
             int id = 0;
             String custID = request.getParameter("id");
             if (custID != null && custID.length() > 0) {
                 id = Integer.parseInt(request.getParameter("id"));
             }
+            
+            //Retrieve parameters for  Customer
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String street = request.getParameter("street");
@@ -59,6 +70,8 @@ public class FoundServlet extends HttpServlet {
             String where = "";
             String values[] = new String[search.length];
             boolean idPresent = false;
+            
+            //Determine appropriate where clauses for query statement 
             if (search[0].equals("id")) {
                 idPresent = true;
                 for (int i = 1; i < search.length; i++) {
@@ -75,6 +88,8 @@ public class FoundServlet extends HttpServlet {
                     }
                 }
             }
+            
+            //Query for Customer and print results in a table
             stmt = conn.createStatement();
             if (idPresent) {
                 rset = stmt.executeQuery("select * from " + tableName + " where " + "(id = " + id + ") " + where);

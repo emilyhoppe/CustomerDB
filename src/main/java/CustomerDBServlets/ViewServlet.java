@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 @WebServlet("/view")
 public class ViewServlet extends HttpServlet {
 
+    //Fields
     private static String dbURL = "jdbc:derby://localhost:1527/contact;create=true;user=nbuser;password=nbuser";
     private static String tableName = "Customers";
     private static Connection conn = null;
@@ -36,24 +37,30 @@ public class ViewServlet extends HttpServlet {
     private PrintWriter out;
     ResultSet rset = null;
 
+    //Methods
+    
+    //Displays all Customers currently in the database
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
         try {
             out = response.getWriter();
+            
+            //Set header
             out.println("<html lang=\"en\">"
                     + "<head><title>View Customers</title></head>");
+            
+            //Set image
             out.println("<body  bgcolor=\"#ffffff\">"
                     + "<img src=\"resources/images/smiley.png\" "
                     + "alt=\"Smiley\">");
+            
+            //Establish connection
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             conn = DriverManager.getConnection(dbURL);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Cannot Connect to Database", "Error Message", JOptionPane.OK_OPTION);
-            ex.printStackTrace();
-        }
-        try {
+            
+            //Create query for all Customers and then display in a table
             stmt = conn.createStatement();
             rset = stmt.executeQuery("SELECT * FROM " + tableName);
             out.println("<h2>Customers Table</h2>");
@@ -69,6 +76,8 @@ public class ViewServlet extends HttpServlet {
                 out.println("<td>" + rset.getString("zip") + "</td></tr>");
             }
             out.println("</table>");
+            
+            //Provide links to perform other operations on the database
             out.println("<h3><a href=\"http://localhost:8080/CustomerDB/insert\">Insert Customers</a></h3>");
             out.println("<h3><a href=\"http://localhost:8080/CustomerDB/search\">Search Customers</a></h3>");
         } catch (Exception ex) {
